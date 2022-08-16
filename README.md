@@ -1,2 +1,1 @@
-# Zanzibar
-Zanzibar dice game
+![magnific-logo](./src/img/zanzibar.png)
