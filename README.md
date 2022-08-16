@@ -1,0 +1,2 @@
+# zanzibar
+Zanzibar dice game
