@@ -1,0 +1,34 @@
+cabal-version:      2.4
+name:               Zanzibar
+version:            0.1.0.0
+
+-- A short (one-line) description of the package.
+-- synopsis:
+
+-- A longer description of the package.
+-- description:
+
+-- A URL where users can report bugs.
+-- bug-reports:
+
+-- The license under which the package is released.
+-- license:
+author:             ATTA
+maintainer:         djessyatta@live.fr
+
+-- A copyright notice.
+-- copyright:
+-- category:
+extra-source-files: CHANGELOG.md
+
+executable Zanzibar
+    main-is:          Main.hs
+
+    -- Modules included in this executable, other than Main.
+    other-modules:    Core.Config, Core.Logic, Core.Types, Core.Util, Core.View
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:    base ^>=4.16.1.0, random, mtl, sort, ansi-terminal
+    hs-source-dirs:   app
+    default-language: Haskell2010
