@@ -5,9 +5,10 @@ module Core.Logic where
     import Core.View
     import Data.Either
     import Text.Read as Read
-    import Data.List (sort, sortBy)
+    import Data.List (sort, sortBy, sortOn)
     import Control.Monad.State as State
     import System.Console.ANSI ( clearScreen )
+    import Data.Function (on)
 
 
     -- Function to simulate three rolls dice
@@ -116,7 +117,7 @@ module Core.Logic where
         let players = _players gs 
         -- get the ID of the player with the lower score
         let pLSId = fst $ minPScore (_scoreboard gs) 
-        -- Calculate the token to distribut for each player except the player with the lower score
+        -- Calculate the token to distribut to each player except the player with the lower score
         let psToken = calcPToken (_scoreboard gs) pLSId
         -- Calculate the sum of the token to distribut to the player with the lower score
         let tokenToGive = sumPToken psToken 
@@ -127,7 +128,7 @@ module Core.Logic where
                                 |(_id, name, token) <- players,
                                 _id /= pLSId]
     
-        put $ gs {_players=uPToken}
+        put $ gs {_players=sortOn thrd uPToken}
     
 
     -- | Function to make a player rolls the dice a certain number of time 
@@ -158,10 +159,10 @@ module Core.Logic where
     initGameState :: IO GameStates
     initGameState = do
         -- Get input from the user
-        nbPlayers <- getINbPlayers
-        nbToken <- getINbToken
-        pNames <- getIPNames nbPlayers 
-        let players = zip3 [1..nbPlayers] pNames (replicate nbPlayers nbToken) 
+        playerNb <- getINbPlayers
+        tokenNb <- getINbToken
+        pNames <- getIPNames playerNb 
+        let players = zip3 [1..playerNb] pNames (replicate playerNb tokenNb) 
         -- Round 0
         clearScreen
         winnerR0 <- playRound0 players
@@ -171,6 +172,7 @@ module Core.Logic where
                 _round=1,
                 _rLeader=defRLeader,
                 _scoreboard=defScoreboard,
+                _playOrder=[],
                 _nbOfTry=defTries,
                 _rWinner=winnerR0,
                 _gStatus=NoWinner
@@ -201,10 +203,11 @@ module Core.Logic where
         setRWinner
         tokenDistrib
         endRound
-    
+
     -- | Function to initialize the data of the next round
     nextRound :: StateT GameStates IO ()
     nextRound = do
+        setNextRoundPO
         clearScoreboard
         setRLeader defRLeader
         setTrie defTries
@@ -233,27 +236,6 @@ module Core.Logic where
         initGS <- initGameState
         gs <- execStateT playRound initGS 
         return ()
-  
-
-
-
-    
-
-            
-            
-
-
-
-
-    
-
-
-    
-    
-
-    
-
-
         
  
 

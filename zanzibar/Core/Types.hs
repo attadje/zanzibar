@@ -10,6 +10,7 @@ module Core.Types where
     type Player = (PID, PName, PToken)
     type Token = Int
     type Scoreboard = [(PID, Rolls)]
+    type PlayOrder = [Player]
     type Tries = Int
      
     data PRState = BScore | LScore deriving Show
@@ -20,11 +21,12 @@ module Core.Types where
         {
             _players       :: Players,
             _round         :: Int,
-            _rLeader       :: RPlayer,
+            _rLeader       :: RPlayer,   -- Round leader
             _scoreboard    :: [RPlayer],
-            _nbOfTry       :: Int,
-            _rWinner       :: Player,
-            _gStatus       :: GameStatus 
+            _playOrder      :: [Player], 
+            _nbOfTry       :: Int,       
+            _rWinner       :: Player,    -- Round winner
+            _gStatus       :: GameStatus -- Game status 
         }  deriving (Show)
         
     data DiceNb 

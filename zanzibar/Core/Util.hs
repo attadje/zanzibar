@@ -1,5 +1,4 @@
 module Core.Util where
-
     import Core.Types
     import System.Random
     import Control.Monad
@@ -7,6 +6,8 @@ module Core.Util where
     import Data.List (sort, sortBy)
     import Control.Monad.State as State
     import Data.List
+    import Data.Function (on)
+    import Data.Ord
 
 
    -- | ###########################################################################################
@@ -47,6 +48,7 @@ module Core.Util where
     getPName :: PID -> Players -> PName
     getPName id players = head [name | (_id, name, _) <- players, id == _id]
 
+   
    -- | ###########################################################################################
    -- | ############################## Get game state informations ################################
    -- | ###########################################################################################
@@ -57,8 +59,8 @@ module Core.Util where
     
     -- | Function to check if a player have already scored in the round
     isPScored :: Player -> [PID] -> Bool
-    isPScored (id, _, _) ids 
-        | id `elem` ids = True
+    isPScored (id, _, _) pid 
+        | id `elem` pid = True
         | otherwise     = False
 
      {-- 
@@ -83,19 +85,23 @@ module Core.Util where
             winner   = getPlayer winnerID (_players gs) 
 
 
-    -- | Function to pick a player who have not scored 
+    -- | Function to pick a player to play next 
     pickPToPlay :: GameStates -> Either Player String
     pickPToPlay gs = go players pID 
-        where
-            players = sortBy sortPID $ _players gs   
-            pID = sort [fst p | p <- _scoreboard gs] 
-            
+        where 
+            -- Get the list of the players ordering by based on the last round score
+            playOrder :: Players
+            playOrder = _playOrder gs
+            -- Get the player ordering by the score of the last round or the id number
+            players = if playOrder == [] then _players gs else playOrder  
+            -- Get the ID of the player who have scored
+            pID = sort [fst pScore | pScore <- _scoreboard gs] 
+            -- Function to find a player who have not scored 
             go :: Players -> [PID] -> Either Player String
-            go [] _                = Right "Empty" 
-            go (p:ps) pID 
-                | isPScored p pID  = go ps pID
-                | otherwise        = Left p
-
+            go [] _ = Right "Empty" 
+            go (player:players) pid 
+                | isPScored player pid  = go players pid
+                | otherwise        = Left player
 
     -- | Function to get the status (Winner | NoWinner) of the game
     gameStatus :: GameStates -> GameStatus
@@ -117,6 +123,15 @@ module Core.Util where
    -- | ############################################################################################
    -- | ############################## Set game state informations #################################
    -- | ############################################################################################
+
+    -- | Function to set the play order of the next round
+    setNextRoundPO :: StateT GameStates IO ()
+    setNextRoundPO = do
+        gs <- State.get
+        let scoreboard = descPScore $ _scoreboard gs
+        let playerOrd  = [getPlayer _id (_players gs) | (_id,_) <-scoreboard]
+        put $ gs {_playOrder=playerOrd}
+
 
     -- | Function to set the round leader 
     setRLeader :: RPlayer -> StateT GameStates IO ()
@@ -253,19 +268,14 @@ module Core.Util where
     formatScore (Rolls []) = "-"
     formatScore (Rolls l)  = intercalate "-" [show nb | nb <- l]
 
+    -- | Ordering the player score from the lowest to the highest score
+    ascPScore :: Scoreboard -> Scoreboard 
+    ascPScore = sort
+    -- | Ordering the player score from the highest to the lowest score
+    descPScore :: Scoreboard -> Scoreboard
+    descPScore = sortOn (Down . snd)
 
-    
-    
-
-
-    
-
-
-
-
-
-    
-
-
-    
+    -- | Get the third elem of a list
+    thrd :: (a, b, c) -> c
+    thrd (_,_,c) = c
 

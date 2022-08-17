@@ -1,6 +1,7 @@
 module Core.View where
     import Data.List
     import Core.Types
+    import Data.Char 
     import Control.Monad.State as State
     import System.Console.ANSI
     import Text.Read as Read
@@ -18,7 +19,7 @@ module Core.View where
         case reply of
                 "Y" -> return reply
                 "N" -> return reply
-                _          -> putStrLn "\nYou have enter a wrong answare. It should be 'Y' or 'N', trie again:" >> getAUTrie
+                _   -> putStrLn ("\nYour input is invalid, it should be 'Y' or 'N'. Try again:") >> getAUTrie
 
     -- | Get the number of token from the user
     getINbToken :: IO Int
@@ -28,7 +29,7 @@ module Core.View where
         case readMaybe nb of
             Just a  -> returnTokenNb a
             Nothing -> do 
-                putStrLn "\nYour input is invalid, you have to enter a number, trie again." >> getINbToken
+                putStrLn ("\nYour input is invalid, it should be a number. Try again.") >> getINbToken
 
     -- | Function to handle if the user add a number of token less than zero 
     returnTokenNb :: Int -> IO Int
@@ -45,7 +46,7 @@ module Core.View where
         nb <- getLine 
         case Read.readMaybe nb of
             Just a  -> returnNbPlayer a
-            Nothing -> putStrLn "\nYour input is invalid, you have to enter a number. Try again." >> getINbPlayers
+            Nothing -> putStrLn ("\nYour input is invalid ( " ++ nb ++ " ), it should be a number. Try again.") >> getINbPlayers
 
     -- | Function to handle if the user add a number of player less than two
     returnNbPlayer :: Int -> IO Int
@@ -60,12 +61,15 @@ module Core.View where
     getIPName pID = do
         putStrLn $ concat ["\nPlayer ", show pID, ", enter your name:"]
         name <- getLine
-        return name 
-
-    -- | Get the name of the players 
+        case name of 
+            (x:xs)  -> return (toUpper x : xs)  
+            _ -> do 
+                putStrLn ("\nYour input is empty, you have to give a name or surname or pseudo. Try again:") >> getIPName pID
+       
+    -- | Function to get the name of several player
     getIPNames :: Int -> IO [String]
-    getIPNames nbPlayers = do
-        pNames <- sequence [getIPName nb | nb <- [1..nbPlayers]]
+    getIPNames playerNb = do
+        pNames <- sequence [getIPName nb | nb <- [1..playerNb]]
         return pNames
 
 
@@ -116,7 +120,7 @@ module Core.View where
             -- Function to print only the message if the player is not the first or the last to play
             print scb ps name 
                 | length scb == 1 || length scb == length ps = do State.lift $ return ()  
-                | otherwise = State.lift $ putStrLn $ "Congrat's "
+                | otherwise = State.lift . putStrLn $ "Congrat's "
                                                       ++ name   
                                                       ++ ", your are the new leader.\n" 
 
@@ -152,7 +156,7 @@ module Core.View where
     printGWinner = do
         gs <- State.get
         let winnerName = getName $ getGWinner gs 
-        State.lift $ putStrLn $ concat ["Congrat's ", winnerName ," you win the game"]
+        State.lift . putStrLn $ concat ["Congrat's ", winnerName ," you win the game."]
 
     -- | Function to print a line                         
     printLine :: StateT GameStates IO () 
@@ -257,23 +261,4 @@ module Core.View where
         State.lift . putStrLn $ concat ["+", replicate 64 '-', "+"]
         State.lift $ printPScore (_players gs) gs 
         State.lift . putStrLn $ concat ["+", replicate 64 '-', "+\n"]
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-    
-
-
    
-        
