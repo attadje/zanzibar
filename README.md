@@ -8,6 +8,7 @@
 - [How to score ?](#How-to-score-?)
 - [Token distribution](#Token-distribution)
 - [Getting Started](#Getting-Started)
+- [Game Info](#Game-Info)
 
 # Zanzibar
 Zanzibar, better known as 421 in french speaking countries, is a popular dice game, and is often played in bars, especially in France but also in Quebec.
@@ -65,7 +66,7 @@ cabal build
 cabal run
 ```
 
-### Game Info
+# Game Info
 
 Start by filling in:
 
