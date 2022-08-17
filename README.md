@@ -65,3 +65,13 @@ cd zanzibar
 cabal build
 cabal run
 ```
+
+### Game Info
+
+Start by filling in:
+
+- The number of players (>=2)
+- The number of token to distribut to each player
+- The name of the players
+
+Then, before starting the game, all players will roll the dice once and the player with the highest score will roll the dice first in round 1.
