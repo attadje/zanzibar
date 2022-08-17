@@ -7,7 +7,7 @@
 - [How do you play the Zanzibar ?](#How-do-you-play-the-Zanzibar-?)
 - [How to score ?](#How-to-score-?)
 - [Token distribution](#Token-distribution)
-- [Token distribution](#Getting-Started)
+- [Getting Started](#Getting-Started)
 
 ### Zanzibar
 Zanzibar, better known as 421 in french speaking countries, is a popular dice game, and is often played in bars, especially in France but also in Quebec.
