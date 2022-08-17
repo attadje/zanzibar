@@ -8,6 +8,7 @@
 - [How to score ?](#How-to-score-?)
 - [Token distribution](#Token-distribution)
 - [Getting Started](#Getting-Started)
+- [Game Info](#Game-Info)
 
 # Zanzibar
 
@@ -66,7 +67,7 @@ cabal build
 cabal run
 ```
 
-### Game Info
+# Game Info
 
 Start by filling in:
 
