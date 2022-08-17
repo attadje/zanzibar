@@ -10,6 +10,7 @@
 - [Getting Started](#Getting-Started)
 
 # Zanzibar
+
 Zanzibar, better known as 421 in french speaking countries, is a popular dice game, and is often played in bars, especially in France but also in Quebec.
 
 # What we need to play the Zanzibar ?
@@ -74,3 +75,5 @@ Start by filling in:
 - The name of the players
 
 Then, before starting the game, all players will roll the dice once and the player with the highest score will roll the dice first in round 1.
+
+For the first round, the order of play after the winner of the previous round or round 0 is played is based on the player's id (ascending order) and in next rounds, the order of play is based on the player score of the previous round (descending order).
