@@ -77,4 +77,4 @@ Start by filling in:
 
 Then, before starting the game, all players will roll the dice once and the player with the highest score will roll the dice first in round 1.
 
-For the first round, the winner of the round 0 will roll the dice first the other player will played in the order based on their id(ascending order) and in next rounds, after the roll of the winner of the previous roud the order of play will be based on the player score of the previous round (descending order). 
+For the first round, the winner of the round 0 will roll the dice first then the others players will played in the order based on their id(ascending order) and in next rounds. In the other round, after the roll of the winner of the previous roud, the order of play will be based on the player score in the previous round (descending order). 
