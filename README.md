@@ -58,6 +58,10 @@ All other combinations rank as a sum of the three dice added together:
 
 - 5 token if the player has the combination 4,5,6 (Zanzibar)
 
+# Requirements
+
+[![Hackage](https://img.shields.io/badge/base-%3E%3D4.16.1.0-blue)](https://hackage.haskell.org/package/base)
+
 # Getting Started
 
 ```consol
