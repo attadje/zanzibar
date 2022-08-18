@@ -8,7 +8,7 @@ module Core.Types where
     type PToken = Int
     type PName = String
     type Players = [Player]
-     type PlayOrder = [Player]
+    type PlayOrder = [Player]
     type RPlayer = (PID, Rolls)
     type Scoreboard = [(PID, Rolls)]
     type Player = (PID, PName, PToken)
