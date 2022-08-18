@@ -7,6 +7,7 @@
 - [How do you play the Zanzibar ?](#How-do-you-play-the-Zanzibar-?)
 - [How to score ?](#How-to-score-?)
 - [Token distribution](#Token-distribution)
+- [Requirements](#Requirements)
 - [Getting Started](#Getting-Started)
 - [Game Info](#Game-Info)
 
