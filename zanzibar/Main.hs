@@ -7,7 +7,6 @@ module Main where
 
     main :: IO ()
     main = do
-        gameTitle
         playGame
 
 

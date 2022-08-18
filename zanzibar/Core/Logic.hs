@@ -233,6 +233,8 @@ module Core.Logic where
     -- | Function to launch the game
     playGame :: IO ()
     playGame = do 
+        clearScreen
+        gameTitle
         initGS <- initGameState
         gs     <- execStateT playRound initGS 
         return ()
