@@ -1,13 +1,15 @@
 module Core.Util where
+    import Data.Ord
+    import Data.List
     import Core.Types
+    import Core.Config
     import System.Random
     import Control.Monad
-    import Core.Config
-    import Data.List (sort, sortBy)
-    import Control.Monad.State as State
-    import Data.List
     import Data.Function (on)
-    import Data.Ord
+    import Data.List (sort, sortBy, sortOn)
+    import Control.Monad.State as State
+    import System.Console.Pretty (Color (..), Style (..), bgColor, color,
+                                        style, supportsPretty)
 
 
    -- | ###########################################################################################
@@ -278,4 +280,27 @@ module Core.Util where
     -- | Get the third elem of a list
     thrd :: (a, b, c) -> c
     thrd (_,_,c) = c
+
+    -- | Collor a text in red
+    redText :: String
+    redText = "\x1b[31m"
+
+    -- | Collor a text in green
+    greenText :: String
+    greenText = "\x1b[32m" 
+
+    -- | Collor a text in yellow
+    yellowText :: String
+    yellowText = "\x1b[33m"
+
+    -- | end the color of the text 
+    endTextColor = "\x1b[0m"
+
+   
+    primary t = bgColor Blue . color White . style Italic $ t 
+
+    -- | Function to generate spaces
+    space :: Int -> String
+    space s = replicate s ' '
+
 

@@ -1,11 +1,13 @@
 module Core.View where
     import Data.List
-    import Core.Types
     import Data.Char 
-    import Control.Monad.State as State
-    import System.Console.ANSI
-    import Text.Read as Read
     import Core.Util
+    import Core.Types
+    import Text.Read as Read
+    import Control.Monad.State as State
+    import System.Console.ANSI as Ansi
+    import System.Console.Pretty (Color (..), Style (..), bgColor, color,
+                                        style, supportsPretty)
 
   
    -- | ###########################################################################################
@@ -13,58 +15,74 @@ module Core.View where
    -- | ###########################################################################################
 
     -- | Get the answer about if the player want an other trie
-    getAUTrie :: IO String   
-    getAUTrie = do
+    getAUTrie :: PName -> IO String   
+    getAUTrie name = do
+        putStrLn $ style Underline $ name 
+                                     ++ ", do you want an other trie ? (Y/N):\n"
         reply <- getLine
         case reply of
                 "Y" -> return reply
                 "N" -> return reply
-                _   -> putStrLn ("\nYour input is invalid, it should be 'Y' or 'N'. Try again:") >> getAUTrie
-
+                _   -> putStrLn (redText 
+                                ++ "\nYour input is invalid, it should be 'Y' or 'N'. Try again:\n" 
+                                ++ endTextColor) >> getAUTrie name
+                                
     -- | Get the number of token from the user
     getINbToken :: IO Int
     getINbToken = do
-        putStrLn $ "\nEnter the number of token:"
+        putStrLn $ style Underline "\nEnter the number of token:"
         nb <- getLine 
         case readMaybe nb of
             Just a  -> returnTokenNb a
             Nothing -> do 
-                putStrLn ("\nYour input is invalid, it should be a number. Try again.") >> getINbToken
+                putStrLn (redText 
+                         ++ "\nYour input is invalid, it should be a number. Try again.\n" 
+                         ++ endTextColor) >> getINbToken
 
     -- | Function to handle if the user add a number of token less than zero 
     returnTokenNb :: Int -> IO Int
     returnTokenNb nb 
         | nb <= 0 = do 
-            putStrLn $ "\nThe number of token should be greater than 0, try again:" 
+            putStrLn $ redText 
+                      ++ "\nThe number of token should be greater than 0, try again:\n" 
+                      ++ endTextColor 
             getINbToken
         | otherwise = return nb
        
     -- Get the number of player
     getINbPlayers :: IO Int
     getINbPlayers = do
-        putStrLn $ "\nEnter the number of players:" 
+        putStrLn $ style Underline "\nEnter the number of players:" 
         nb <- getLine 
         case Read.readMaybe nb of
             Just a  -> returnNbPlayer a
-            Nothing -> putStrLn ("\nYour input is invalid ( " ++ nb ++ " ), it should be a number. Try again.") >> getINbPlayers
+            Nothing -> putStrLn (redText 
+                                ++ "\nYour input is invalid, it should be a number. Try again.\n" 
+                                ++ endTextColor) >> getINbPlayers
 
     -- | Function to handle if the user add a number of player less than two
     returnNbPlayer :: Int -> IO Int
     returnNbPlayer nb 
         | nb < 2 = do
-            putStrLn $ "\nThe number of players should be greater than 1, try again."
+            putStrLn $ redText 
+                       ++ "\nThe number of players should be greater than 1, try again.\n" 
+                       ++ endTextColor
             getINbPlayers
         | otherwise = return nb
         
     -- | Get the name of a player
     getIPName :: PID -> IO String
     getIPName pID = do
-        putStrLn $ concat ["\nPlayer ", show pID, ", enter your name:"]
+        putStrLn $ style Underline $ "\nPlayer " 
+                                     ++ show pID
+                                     ++ ", enter your name:"
         name <- getLine
         case name of 
             (x:xs)  -> return (toUpper x : xs)  
             _ -> do 
-                putStrLn ("\nYour input is empty, you have to give a name or surname or pseudo. Try again:") >> getIPName pID
+                putStrLn (redText 
+                         ++ "\nYour input is empty. Try again:\n" 
+                         ++ endTextColor) >> getIPName pID
        
     -- | Function to get the name of several player
     getIPNames :: Int -> IO [String]
@@ -79,10 +97,12 @@ module Core.View where
 
     printR0Winner :: PName -> IO ()
     printR0Winner name = do 
-        putStrLn $ "Congrats "
+        putStrLn $ greenText 
+                ++ "Congrats "
                 ++ name
-                ++ ", you have the highest score.\nYou will start to rolls the dice first in the round 1.\n\n"
-                ++ name ++ ", when you are ready 'press' enter to start the first round."
+                ++ ", you have the highest score.\nYou will start to rolls the dice first in the round 1.\n\n" 
+                ++ endTextColor
+                ++ style Underline (name ++ ", when you are ready press 'Enter' to start the first round:")
 
 
     -- Function to print the round winner
@@ -93,17 +113,19 @@ module Core.View where
         let round = _round gs
         let (_,rWinner,_) = _rWinner gs 
         printScoreboard
-        State.lift . putStrLn $ "Congrats " 
+        State.lift . putStrLn $ greenText 
+                ++ "Congrats " 
                 ++ rWinner 
                 ++ ", you have win the round "
                 ++ show (round) ++ ".\n"
                 ++ "You will play first in the round "
                 ++ show (round + 1) ++ "."
                 ++ "\n\n"
-                ++ rWinner ++ ", press 'Enter' when you are ready to start the next round."
+                ++ endTextColor
+                ++ style Underline (rWinner ++ ", press 'Enter' when you are ready to start the next round:")
                 ++ "\n\n"
         _ <- State.lift $ getLine
-        State.lift $ clearScreen
+        State.lift $ Ansi.clearScreen
         return ()
         
 
@@ -120,43 +142,32 @@ module Core.View where
             -- Function to print only the message if the player is not the first or the last to play
             print scb ps name 
                 | length scb == 1 || length scb == length ps = do State.lift $ return ()  
-                | otherwise = State.lift . putStrLn $ "Congrat's "
+                | otherwise = State.lift . putStrLn $ greenText 
+                                                      ++ "Congrat's "
                                                       ++ name   
-                                                      ++ ", your are the new leader.\n" 
-
-        
-
-    -- | Function to print the number of the current round
-    printRound :: StateT GameStates IO ()
-    printRound = do
-        gs <- State.get
-        State.lift . putStrLn $ concat ["\n",
-                                replicate 30 '-',
-                                " ",
-                                "Round ",
-                                show $ _round gs,
-                                " ",
-                                replicate 30 '-',
-                                "\n"]
+                                                      ++ ", your are the new leader.\n"
+                                                      ++ endTextColor
 
     -- | Function to print the line of the round 0 
     printR0 :: IO ()
     printR0 = do
-        putStrLn $ concat ["\n",
-                        replicate 30 '-',
+        putStrLn $ primary $ concat [replicate 30 '-',
                         " ",
                         "Round ",
                         show 0,
                         " ",
-                        replicate 30 '-',
-                        "\n"]
+                        replicate 30 '-']
 
     -- | Print the name of the game winner and 
     printGWinner :: StateT GameStates IO ()
     printGWinner = do
         gs <- State.get
         let winnerName = getName $ getGWinner gs 
-        State.lift . putStrLn $ concat ["Congrat's ", winnerName ," you win the game."]
+        State.lift . putStrLn $ greenText 
+                                ++ "Congrat's "
+                                ++ winnerName
+                                ++ " you win the game."
+                                ++ endTextColor
 
     -- | Function to print a line                         
     printLine :: StateT GameStates IO () 
@@ -170,9 +181,9 @@ module Core.View where
         State.lift . putStrLn $ concat [pName,
                                 ", you have ",
                                 show t,
-                                " tries",
-                                if t == 1 then " left.\n" else ".\n",
-                                "Press 'Enter' to roll the dice..."]
+                                " trie",
+                                if t == 1 then " left.\n" else "s.\n",
+                                style Underline "Press 'Enter' to roll the dice:"]
 
   
     {-- 
@@ -261,4 +272,15 @@ module Core.View where
         State.lift . putStrLn $ concat ["+", replicate 64 '-', "+"]
         State.lift $ printPScore (_players gs) gs 
         State.lift . putStrLn $ concat ["+", replicate 64 '-', "+\n"]
+
+    -- | Function print the name of the game
+    gameTitle :: IO ()
+    gameTitle = do
+        putStrLn ( primary (space 30 ++ "Zanzibar Game" ++ space 30))
+
+   
+
+         
+
+   
    

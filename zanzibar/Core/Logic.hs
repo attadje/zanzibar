@@ -9,6 +9,8 @@ module Core.Logic where
     import Control.Monad.State as State
     import System.Console.ANSI ( clearScreen )
     import Data.Function (on)
+    import System.Console.Pretty (Color (..), Style (..), bgColor, color,
+                                        style, supportsPretty)
 
 
     -- Function to simulate three rolls dice
@@ -22,7 +24,7 @@ module Core.Logic where
     rollsDice :: Player -> IO (Int, Rolls)
     rollsDice (id, name, _) = do
         printR0
-        putStrLn $ name ++ ", press 'Enter' to rolls the dice..." 
+        putStrLn $ style Underline $ "\n" ++ name ++ ", press 'Enter' to rolls the dice:" 
         _ <- getLine
         rolls <- rollThreeDice
         drawTheDice rolls 
@@ -146,13 +148,11 @@ module Core.Logic where
         case tries of
             1 -> do
                 checkAndSetScore pScore defTries
-            _ -> do
-                printLine
-                State.lift . putStrLn $ name ++ ", do you want an other trie ? (Y/N):\n" 
-                inputUser <- State.lift $ getAUTrie
+            _ -> do 
+                inputUser <- State.lift $ getAUTrie name 
                 case inputUser of
                     "Y" -> playerRolls p (tries - 1)
-                    "N" -> printLine >> checkAndSetScore pScore (if tries == defTries then 1 else tries)
+                    "N" -> checkAndSetScore pScore (if tries == defTries then 1 else tries)
     
     
     -- | Function to initialized the game state
