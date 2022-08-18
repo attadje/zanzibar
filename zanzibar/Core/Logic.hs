@@ -40,7 +40,7 @@ module Core.Logic where
     -- | Rolls the dice the players who haven't scored
     otherPRolls :: StateT GameStates IO ()
     otherPRolls  = do
-        gs          <- State.get
+        gs <- State.get
         let player  = pickPToPlay gs 
         let trie    = _nbOfTry gs 
         case isLeft player of
@@ -97,14 +97,14 @@ module Core.Logic where
     checkAndSetScore :: RPlayer -> Tries -> StateT GameStates IO ()
     checkAndSetScore rPlayer trie = do
         gs <- State.get
-        let cNbTry = _nbOfTry gs 
+        let cNbTry        = _nbOfTry gs 
         let (pID, pScore) = rPlayer 
         let (lID, lScore) = _rLeader gs  
-        let pName = getPName pID $ _players gs  
+        let pName         = getPName pID $ _players gs  
         case (pScore > lScore) of
             True -> do
                 setRLeader rPlayer
-                setTrie (if cNbTry >= 1 && trie == 1 || trie == 3 && lScore /= NoRolls  then 1 else trie) -- need to be improve
+                setTrie (if cNbTry >= 1 && trie == 1 || trie == 3 && lScore /= NoRolls  then 1 else trie) -- to refacator
                 addPScore rPlayer
                 printNewLMsg 
                 otherPRolls    
@@ -160,8 +160,8 @@ module Core.Logic where
     initGameState = do
         -- Get input from the user
         playerNb <- getINbPlayers
-        tokenNb <- getINbToken
-        pNames <- getIPNames playerNb 
+        tokenNb  <- getINbToken
+        pNames   <- getIPNames playerNb 
         let players = zip3 [1..playerNb] pNames (replicate playerNb tokenNb) 
         -- Round 0
         clearScreen
@@ -187,7 +187,7 @@ module Core.Logic where
         -- Rolls the dice for each player
         rolls <- sequence [rollsDice p | p <- players]
         -- Get the name of the player with the highest score
-        let pid = fst $ maxPScore rolls
+        let pid    = fst $ maxPScore rolls
         let winner =  getPlayer pid players 
         -- Print the name of the winner and wait the winner to press enter to start the round 1
         printR0Winner $ getName winner 
@@ -222,7 +222,7 @@ module Core.Logic where
       setRLeader defRLeader
       setTrie defTries
       -- Set the number of token of each player
-      gs <- State.get
+      gs      <- State.get
       nbToken <- State.lift $ getINbToken 
       setPToken nbToken
       -- Round 0
@@ -234,7 +234,7 @@ module Core.Logic where
     playGame :: IO ()
     playGame = do 
         initGS <- initGameState
-        gs <- execStateT playRound initGS 
+        gs     <- execStateT playRound initGS 
         return ()
         
  

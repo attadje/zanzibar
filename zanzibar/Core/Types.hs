@@ -3,18 +3,16 @@ module Core.Types where
     import Control.Monad.State
     
     type PID = Int
+    type Tries = Int
+    type Token = Int
     type PToken = Int
     type PName = String
     type Players = [Player]
+     type PlayOrder = [Player]
     type RPlayer = (PID, Rolls)
-    type Player = (PID, PName, PToken)
-    type Token = Int
     type Scoreboard = [(PID, Rolls)]
-    type PlayOrder = [Player]
-    type Tries = Int
-     
-    data PRState = BScore | LScore deriving Show
-
+    type Player = (PID, PName, PToken)
+    
     data GameStatus = Winner | NoWinner deriving Show
     
     data GameStates = GameStates 
@@ -23,7 +21,7 @@ module Core.Types where
             _round         :: Int,
             _rLeader       :: RPlayer,   -- Round leader
             _scoreboard    :: [RPlayer],
-            _playOrder      :: [Player], 
+            _playOrder     :: [Player], 
             _nbOfTry       :: Int,       
             _rWinner       :: Player,    -- Round winner
             _gStatus       :: GameStatus -- Game status 
